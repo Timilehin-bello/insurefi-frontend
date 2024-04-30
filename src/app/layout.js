@@ -1,8 +1,10 @@
 import { Inter } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import "./globals.css";
+import SideBar from "@/components/SideBar/SideBar";
 import NavBar from "@/components/NavBar/NavBar";
 import { Providers } from "./providers";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,11 +18,16 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <NavBar />
-
-          {children}
+          <div className="flex justify-between align-top ">
+            <div>{/* <SideBar /> */}</div>
+            <div>
+              <NavBar />
+            </div>
+          </div>
+          <div>{children}</div>
         </Providers>
       </body>
+      <Script src="../path/to/flowbite/dist/flowbite.min.js"></Script>
     </html>
   );
 }
