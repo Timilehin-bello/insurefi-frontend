@@ -1,21 +1,17 @@
 "use client";
 
 import InsuranceCard from "@/components/InsuranceCard/InsuranceCard";
-import NavBar from "@/components/NavBar/NavBar";
-import Image from "next/image";
 import { GraphIcon } from "../../public/icons/graph";
-import { PropertyIcon } from "../../public/icons/property";
-import { CropIcon } from "../../public/icons/crop";
 import { useState } from "react";
 import PolicyClaimCard from "@/components/PolicyClaimCard/PolicyClaimCard";
 import SimpleLineChat from "@/components/SimpleLineChart/SimpleLineChart";
 import TinyLineChart from "@/components/TinyLineChart/TinyLineChart";
+import Link from "next/link";
 
 export default function Home() {
   const [isActive, setIsActive] = useState("policy");
   return (
-    <div className="p-4 sm:ml-64">
-      <NavBar />
+    <div>
 
       <div className="p-4  border-gray-200  rounded-lg ">
         <div className="mb-4">
@@ -24,15 +20,18 @@ export default function Home() {
           </span>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <InsuranceCard
-            src="/icons/vehicle.svg"
-            alt="vehicle"
-            insuranceType={"Auto"}
-            numberOfInsured={`2380 Cars`}
-            totalAmount={`$45,789`}
-            textColor="text-white"
-            bgColor="bg-black"
-          />
+          <Link href={"/auto-application"}>
+            <InsuranceCard
+              src="/icons/vehicle.svg"
+              alt="vehicle"
+              insuranceType={"Auto"}
+              numberOfInsured={`2380 Cars`}
+              totalAmount={`$45,789`}
+              textColor="text-white"
+              bgColor="bg-black"
+            />
+          </Link>
+
           <InsuranceCard
             src="/icons/health.svg"
             alt="health"

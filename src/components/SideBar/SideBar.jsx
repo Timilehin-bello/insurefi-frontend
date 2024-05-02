@@ -63,7 +63,7 @@ const SideBar = () => {
             width={100}
             height={100}
             src={"/images/logo.svg"}
-            className="w-10 h-10 ml-5"
+            className="w-10 h-10 ml-5 mt-5"
           />
 
           <ul className="space-y-3  font-medium mt-4">
