@@ -7,7 +7,7 @@ import SideBar from "@/components/SideBar/SideBar";
 import Script from "next/script";
 import { Web3Modal } from "@/utils/connection";
 import NavBar from "@/components/NavBar/NavBar";
-import { InsureFiProvider } from "@/context/InsureFi";
+import { InsureFiProvider } from "@/context/InsureFiContext";
 
 export const metadata = {
   title: "InsureFi",

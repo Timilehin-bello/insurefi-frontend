@@ -9,12 +9,25 @@ import config from "../config/config.json";
 import insureFiAutomobileABI from "../config/InsureFiAutomobile.json";
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { toast } from "react-toastify";
+import { subdomain, client } from "../config/ipfsConfig";
 
 export const InsureFiContext = React.createContext();
 
 export const InsureFiProvider = ({ children }) => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
+
+  const uploadToIPFS = async (file) => {
+    try {
+      const added = await client.add({ content: file });
+
+      const url = `${subdomain}/ipfs/${added.path}`;
+
+      return url;
+    } catch (error) {
+      toast.error("Error Uploading to IPFS");
+    }
+  };
 
   const fetchContract = async (signerOrProvider) => {
     const insureFiAutomobileConfig = config[chainId].insureFiAutomobile;
@@ -71,6 +84,10 @@ export const InsureFiProvider = ({ children }) => {
 
       const contract = await fetchContract(signer);
 
+      const added = await client.add(data);
+
+      const url = `${subdomain}/ipfs/${added.path}`;
+
       const transaction = await contract.generatePremium(
         policyHolder,
         driverAge,
@@ -82,6 +99,12 @@ export const InsureFiProvider = ({ children }) => {
         coverageType,
         vehicleValue
       );
+
+      toast.promise(await transaction.wait(), {
+        pending: "Automobile premium generating...",
+        success: "Automobile premium generated successfully",
+        error: "Error while generating automobile premium",
+      });
 
       if (await transaction.wait()) {
         toast.success("Automobile premium generated successfully");
