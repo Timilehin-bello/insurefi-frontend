@@ -12,7 +12,6 @@ export default function Home() {
   const [isActive, setIsActive] = useState("policy");
   return (
     <div>
-
       <div className="p-4  border-gray-200  rounded-lg ">
         <div className="mb-4">
           <span className=" text-[20.24px] font-medium text-black">
@@ -31,16 +30,17 @@ export default function Home() {
               bgColor="bg-black"
             />
           </Link>
-
-          <InsuranceCard
-            src="/icons/health.svg"
-            alt="health"
-            insuranceType={"Health"}
-            numberOfInsured={`4689 Cars`}
-            totalAmount={`$145,789`}
-            bgColor="bg-white"
-            textColor="text-black"
-          />
+          <Link href={"/property-insurance"}>
+            <InsuranceCard
+              src="/icons/property.svg"
+              alt="property"
+              insuranceType={"Property"}
+              numberOfInsured={`380 Properties`}
+              totalAmount={`$109,789`}
+              bgColor="bg-white"
+              textColor="text-black"
+            />
+          </Link>
 
           <div
             className={` p-6 bg-white flex flex-col items-center w-72 rounded-[16.87px] shadow space-y-10`}

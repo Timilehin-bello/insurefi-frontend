@@ -1,6 +1,5 @@
 import React from "react";
-import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import Image from "next/image";
 
 const NavBar = () => {
@@ -10,7 +9,6 @@ const NavBar = () => {
         <div className="flex justify-between items-center">
           <div className="flex gap-10">
             <div className="flex gap-2 text-black items-center">
-
               <Image
                 width={24}
                 height={24}
@@ -32,11 +30,13 @@ const NavBar = () => {
                   className="w-8 h-8 text-gray-500 transition duration-75 group-hover:text-gray-900 "
                 />
               </div>
-              <h3 className="font-sans font-base textlg">Active Policies <br /><span className="font-extrabold">+120</span></h3>
+              <h3 className="font-sans font-base textlg">
+                Active Policies <br />
+                <span className="font-extrabold">+120</span>
+              </h3>
             </div>
 
             <div className=" flex gap-4 items-center">
-
               <div className="bg-[#7c74d4] rounded-full w-12 h-12 flex items-center justify-center">
                 <Image
                   width={20}
@@ -74,7 +74,6 @@ const NavBar = () => {
                 />
               </div>
             </div>
-
           </div>
 
           <div className="flex text-sm">
