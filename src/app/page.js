@@ -80,7 +80,7 @@ export default function Home() {
           </span>
         </div>
         <div className="grid grid-cols-3 gap-4 ">
-          <div className="flex p-8 col-span-2  rounded-[21.09px] bg-white h-auto ">
+          <div className="flex flex-col p-8 col-span-2  rounded-[21.09px] bg-white h-auto ">
             {/* <div className="flex gap-16 ">
               <div className="flex  gap-1    ">
                 <span className="text-[16.87px] text-[#FF0B0B]">
@@ -97,9 +97,19 @@ export default function Home() {
                 <span className="text-[16.87px] text-black ">Policies</span>
               </div>
             </div> */}
-            <div className="flex gap-1">
-              <GraphIcon />
-              <GraphIcon />
+            <div className="flex gap-20  px-10 py-4">
+              <div className="flex gap-1">
+                <span className="text-[#FF0B0B]">
+                  <GraphIcon />
+                </span>
+                <span className="text-base">Claims</span>
+              </div>
+              <div className="flex gap-1">
+                <span className="text-[16.87px] text-[#287D00]">
+                  <GraphIcon />
+                </span>
+                <span className="text-base">Policies</span>
+              </div>
             </div>
             <SimpleLineChat />
           </div>

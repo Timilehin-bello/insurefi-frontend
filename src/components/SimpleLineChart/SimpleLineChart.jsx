@@ -34,7 +34,7 @@ const SimpleLineChat = () => {
             horizontal={false}
           />
           <XAxis dataKey="week" axisLine={false} tickLine={false} />
-          <YAxis hide />
+          <YAxis axisLine={false} tickLine={false} />
           <Tooltip />
           <Line
             type="monotone"
