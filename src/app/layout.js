@@ -1,10 +1,13 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import SideBar from "@/components/SideBar/SideBar";
 
 import Script from "next/script";
 import { Web3Modal } from "@/utils/connection";
 import NavBar from "@/components/NavBar/NavBar";
+import { InsureFiProvider } from "@/context/InsureFi";
 
 export const metadata = {
   title: "InsureFi",
@@ -16,12 +19,15 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Web3Modal>
-          <SideBar />
-          <div className="p-4 sm:ml-64">
-            <NavBar />
-            {children}
-          </div>
+          <InsureFiProvider>
+            <SideBar />
+            <div className="p-4 sm:ml-64">
+              <NavBar />
+              {children}
+            </div>
+          </InsureFiProvider>
         </Web3Modal>
+        <ToastContainer />
       </body>
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></Script>
     </html>
