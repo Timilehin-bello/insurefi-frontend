@@ -98,7 +98,7 @@ export default function Home() {
                 <span className="text-[16.87px] text-black ">Policies</span>
               </div>
             </div> */}
-            <div className="flex gap-6  px-10 py-4">
+            <div className="flex gap-20  px-10 py-4">
               <div className="flex gap-1">
                 <span className="text-[#FF0B0B]">
                   <GraphIcon />
