@@ -23,8 +23,11 @@ export const InsureFiProvider = ({ children }) => {
 
       const url = `${subdomain}/ipfs/${added.path}`;
 
+      console.log(url);
+
       return url;
     } catch (error) {
+      console.log("Ipfs Error", error.message);
       toast.error("Error Uploading to IPFS");
     }
   };
@@ -120,6 +123,7 @@ export const InsureFiProvider = ({ children }) => {
     <InsureFiContext.Provider
       value={{
         generateAutomobilePremium,
+        uploadToIPFS,
       }}
     >
       {children}
