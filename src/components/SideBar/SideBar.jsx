@@ -15,13 +15,13 @@ const navItems = [
     icon: "/proposals.svg",
   },
   {
-    name: "Calender",
-    link: "/calender",
+    name: "Automobile Insurance",
+    link: "/auto-insurance",
     icon: "/calender.svg",
   },
   {
-    name: "Statistics",
-    link: "/statistics",
+    name: "Property Insurance",
+    link: "/property-insurance",
     icon: "/statistics.svg",
   },
 ];
