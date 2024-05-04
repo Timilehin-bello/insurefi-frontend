@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: {
-    WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
+  images: {
+    domains: ["insurefi.infura-ipfs.io"],
   },
-  transpilePackages: ["@mui/x-charts"],
+
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
+  },
 };
 
 export default nextConfig;
