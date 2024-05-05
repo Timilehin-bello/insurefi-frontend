@@ -57,9 +57,11 @@ export default function Home() {
               /> */}
 
               <div className="w-[115.55px]">
+               <Link href={'/proposals'} >
                 <button className="bg-white w-full text-black border border-[#C9C5C5] p-2 rounded-full font-bold ">
                   Proposals
                 </button>
+                   </Link>
               </div>
             </div>
 
