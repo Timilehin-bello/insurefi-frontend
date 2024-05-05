@@ -2,14 +2,11 @@
 
 import InsuranceCard from "@/components/InsuranceCard/InsuranceCard";
 import { GraphIcon } from "../../public/icons/graph";
-import { useState } from "react";
 import PolicyClaimCard from "@/components/PolicyClaimCard/PolicyClaimCard";
 import SimpleLineChat from "@/components/SimpleLineChart/SimpleLineChart";
-import TinyLineChart from "@/components/TinyLineChart/TinyLineChart";
 import Link from "next/link";
 
 export default function Home() {
-  const [isActive, setIsActive] = useState("policy");
   return (
     <div>
       <div className="p-4  border-gray-200  rounded-lg ">
@@ -19,7 +16,7 @@ export default function Home() {
           </span>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <Link href={"/auto-application"}>
+          <Link href={"/auto-insurance"}>
             <InsuranceCard
               src="/icons/vehicle.svg"
               alt="vehicle"
