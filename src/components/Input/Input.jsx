@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { CloseIcon } from "../../../public/icons/close";
 // import { FaTimes } from 'react-icons/fa';
 
 const Input = ({ name, placeholder, type }) => {
@@ -21,14 +22,14 @@ const Input = ({ name, placeholder, type }) => {
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="outline-none pr-10 w-full rounded-md"
+        className="outline-none pr-10 w-full rounded-md border border-[#D9D9D9]"
       />
 
       <button
         onClick={handleClear}
-        className="absolute top-[72%] right-2 transform -translate-y-1/2 bg-slate-400 cursor-pointer rounded-full border-none font-normal py-1 px-3 text-white"
+        className="absolute top-[72%] right-2 transform -translate-y-1/2  cursor-pointer "
       >
-        x
+        <CloseIcon />
       </button>
     </div>
   );

@@ -28,13 +28,13 @@ const DropZone = ({
     maxSize: 5000000,
   });
   return (
-    <div className="grid grid-cols-3 gap-10 ">
+    <div className="flex items-center justify-center">
       <div
-        className="col-span-2 border-2 cursor-pointer border-dashed rounded-2xl h-52 border-[#FFC0CBE5] flex items-center justify-center p-4"
+        className="border-2 cursor-pointer border-dashed rounded-md h-52 mx-auto w-[400px] border-[#FFC0CB] flex items-center justify-center p-4"
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        <div className=" flex flex-col text-center items-center justify-center">
+        <div className="flex flex-col text-center items-center justify-center">
           <div className="p-4">
             <Image
               src={"/images/upload.svg"}
@@ -54,19 +54,19 @@ const DropZone = ({
       </div>
 
       {fileUrl && (
-        <aside className="">
-          <div className="">
+        <aside className="mx-0 max-w-[400px]">
+          <div className="mx-0">
             <Image src={fileUrl} alt="nft image" width={200} height={200} />
 
-            {/* <div className="">
-              <div>
+            {/* <div className="mx-0">
+              <div className="mx-0">
                 <p>
                   <span>NFT Name:</span>
                   {name || ""}
                 </p>
               </div>
 
-              <div>
+              <div className="mx-0">
                 <p>
                   <span>Description</span>
                   {description || ""}

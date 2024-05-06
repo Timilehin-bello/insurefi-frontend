@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
+import Button from "../Button/Button";
 const Stepper = ({ children }) => {
   const steps = ["Application", "Premium", "Payment", "Confirm"];
   const [currentStep, setCurrentStep] = useState(1);
@@ -25,7 +26,7 @@ const Stepper = ({ children }) => {
 
       {children}
       <div className="flex justify-center py-5">
-        {!complete && (
+        {/* {!complete && (
           <button
             className="btn bg-[#ffc0cb] text-white cursor-pointer py-3 px-32 mt-3 font-semibold text-lg uppercase"
             onClick={() => {
@@ -38,6 +39,21 @@ const Stepper = ({ children }) => {
               ? "Proceed To Payment"
               : "Upload Files"}
           </button>
+        )} */}
+
+        {!complete && (
+          <Button
+            handleClick={() => {
+              currentStep === steps.length - 1
+                ? setComplete(true)
+                : setCurrentStep((prev) => prev + 1);
+            }}
+            btnName={
+              currentStep === steps.length - 1
+                ? "Proceed To Payment"
+                : "Upload Files"
+            }
+          />
         )}
       </div>
     </>
