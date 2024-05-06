@@ -3,6 +3,9 @@
     "insureFiAutomobile": {
       "address": "0xcb858398013e1f50f33e05f6bf8167db9c01c340"
     },
+    "insureFiProperty": {
+      "address": "0xcb858398013e1f50f33e05f6bf8167db9c01c340"
+    },
     "explorerURL": "https://sepolia.etherscan.io/"
   }
 }

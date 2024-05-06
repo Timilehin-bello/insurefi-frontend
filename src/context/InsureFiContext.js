@@ -7,6 +7,8 @@ import {
 } from "@web3modal/ethers/react";
 import config from "../config/config.json";
 import insureFiAutomobileABI from "../config/InsureFiAutomobile.json";
+import insureFiPropertyABI from "../config/InsureFiProperty.json";
+
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { toast } from "react-toastify";
 import { subdomain, client } from "../config/ipfsConfig";
@@ -28,18 +30,28 @@ export const InsureFiProvider = ({ children }) => {
       return url;
     } catch (error) {
       console.log("Ipfs Error", error.message);
+
+      const fetchAutomobileContract = async (signerOrProvider) => {
+        const insureFiAutomobileConfig = config[chainId].insureFiAutomobile;
+        const insureFiAutomobileContract = new Contract(
+          insureFiAutomobileConfig.address,
+          insureFiAutomobileABI,
+          signerOrProvider
+        );
+        return insureFiAutomobileContract;
+      };
       toast.error("Error Uploading to IPFS");
     }
   };
 
-  const fetchContract = async (signerOrProvider) => {
-    const insureFiAutomobileConfig = config[chainId].insureFiAutomobile;
-    const insureFiAutomobileContract = new Contract(
-      insureFiAutomobileConfig.address,
-      insureFiAutomobileABI,
+  const fetchPropertyContract = async (signerOrProvider) => {
+    const insureFiPropertyConfig = config[chainId].insureFiProperty;
+    const insureFiPropertyContract = new Contract(
+      insureFiPropertyConfig.address,
+      insureFiPropertyABI,
       signerOrProvider
     );
-    return insureFiAutomobileContract;
+    return insureFiPropertyContract;
   };
 
   const generateAutomobilePremium = async (
@@ -85,7 +97,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const added = await client.add(data);
 
@@ -143,7 +155,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.generatePremium(
         policyHolder,
@@ -184,7 +196,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.initiatePolicy(policyHolder, id);
 
@@ -212,7 +224,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.initiatePolicy(policyHolder, id);
 
@@ -240,7 +252,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.checkPolicyStatus(policyHolder, id);
 
@@ -268,7 +280,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchPropertyContract(provider);
 
       const transaction = await contract.checkPolicyStatus(policyHolder, id);
 
@@ -297,7 +309,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.renewPolicy(policyHolder, id);
 
@@ -326,7 +338,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.renewPolicy(policyHolder, id);
 
@@ -355,7 +367,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.terminatePolicy(policyHolder, reason);
 
@@ -384,7 +396,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.terminatePolicy(policyHolder, reason);
 
@@ -413,7 +425,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.removeVoter(policyHolder);
 
@@ -441,7 +453,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.removeVoter(voter);
 
@@ -476,7 +488,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const added = await client.add(data);
 
@@ -519,7 +531,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const added = await client.add(data);
 
@@ -556,7 +568,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.checkPolicy(policyHolder, id);
 
@@ -584,7 +596,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.checkPolicy(policyHolder, id);
 
@@ -615,7 +627,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.getClaim(index);
 
@@ -640,7 +652,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.getAllClaim();
 
@@ -667,7 +679,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchPropertyContract(provider);
 
       const transaction = await contract.getClaim(index);
 
@@ -692,7 +704,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchPropertyContract(provider);
 
       const transaction = await contract.getAllClaim();
 
@@ -725,7 +737,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.voteOnClaim(claimId, vote);
 
@@ -758,7 +770,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.voteOnClaim(claimId, vote);
 
@@ -791,7 +803,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.getVoteCounts(claimId);
 
@@ -824,7 +836,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.getVoteCounts(claimId);
 
@@ -857,7 +869,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.drainContract(amount);
 
@@ -889,7 +901,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.drainContract(amount);
 
