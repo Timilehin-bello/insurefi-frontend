@@ -44,8 +44,8 @@ const PropertyInsurance = () => {
                 <div className="w-96">
                   <div className="pt-3">
                     <Input
-                      name="Claim ID"
-                      placeholder="Enter Claim ID"
+                      name="Claim Amount"
+                      placeholder="Enter Claim Amount"
                       type="number"
                     />
                   </div>
