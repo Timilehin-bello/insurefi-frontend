@@ -152,6 +152,31 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "policyHolder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "policyId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      }
+    ],
+    "name": "PremiumGenerated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "voter",
@@ -327,6 +352,11 @@
             "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "imageurl",
+            "type": "string"
           }
         ],
         "internalType": "struct AutomobileInsurancePolicy.Policy",
@@ -405,11 +435,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_policyHolder",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "driverAge",
         "type": "uint256"
@@ -453,6 +478,11 @@
         "internalType": "uint256",
         "name": "vehicleValue",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "imageUrl",
+        "type": "string"
       }
     ],
     "name": "generatePremium",
@@ -638,6 +668,11 @@
             "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "imageurl",
+            "type": "string"
           }
         ],
         "internalType": "struct AutomobileInsurancePolicy.Policy",
