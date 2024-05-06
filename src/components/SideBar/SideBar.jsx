@@ -24,6 +24,11 @@ const navItems = [
     link: "/property-insurance",
     icon: "/statistics.svg",
   },
+  {
+    name: "Claims",
+    link: "/claim",
+    icon: "/proposals.svg",
+  },
 ];
 
 const SideBar = () => {
