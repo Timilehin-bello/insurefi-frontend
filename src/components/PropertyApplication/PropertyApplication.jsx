@@ -12,16 +12,31 @@ const PropertyApplication = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [value, setValue] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const handleClear = () => {
+    setValue("");
+  };
   return (
     <div>
       <div className="w-full">
         <div className="flex justify-between w-full">
           <div className="w-96">
             <div className="pt-3">
-              <h3 className="font-semibold text-lg">
-                Personal InhtmlFormation
-              </h3>
-              <Input name="Name" placeholder="Full Name" type="text" />
+              <h3 className="font-semibold text-lg">Personal Information</h3>
+              <Input
+                name="Name"
+                placeholder="Full Name"
+                type="text"
+                value={value}
+                handleChange={handleChange}
+                handleClear={handleClear}
+              />
             </div>
           </div>
           <div className="pt-4">
@@ -31,8 +46,16 @@ const PropertyApplication = () => {
                 <h3 className="font-semibold text-lg">Property Location</h3>
               </div>
               <div className="flex justify-between">
-                <Radio options={["Urban", "Suburban", "Rural"]} />
-                <Radio options={["Residential", "Commercial", "Industrial"]} />
+                <Radio
+                  options={["Urban", "Suburban", "Rural"]}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                />
+                <Radio
+                  options={["Residential", "Commercial", "Industrial"]}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                />
               </div>
             </div>
           </div>
