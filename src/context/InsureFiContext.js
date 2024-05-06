@@ -87,10 +87,6 @@ export const InsureFiProvider = ({ children }) => {
 
       const contract = await fetchContract(signer);
 
-      const added = await client.add(data);
-
-      const url = `${subdomain}/ipfs/${added.path}`;
-
       const transaction = await contract.generatePremium(
         policyHolder,
         driverAge,
@@ -104,17 +100,11 @@ export const InsureFiProvider = ({ children }) => {
         imageUrl
       );
 
-      toast.promise(await transaction.wait(), {
-        pending: "Automobile premium generating...",
-        success: "Automobile premium generated successfully",
-        error: "Error while generating automobile premium",
-      });
-
-      if (await transaction.wait()) {
+      const premium = await transaction.wait();
+      if (premium) {
+        localStorage.setItem(address, JSON.stringify(premium));
         toast.success("Automobile premium generated successfully");
       }
-
-      router.push("/");
     } catch (error) {
       toast.error("Error while generating automobile premium");
     }

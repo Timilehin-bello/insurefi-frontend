@@ -3,17 +3,14 @@ import { useState } from "react";
 import { CloseIcon } from "../../../public/icons/close";
 // import { FaTimes } from 'react-icons/fa';
 
-const Input = ({ name, placeholder, type }) => {
-  const [value, setValue] = useState("");
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  const handleClear = () => {
-    setValue("");
-  };
-
+const Input = ({
+  name,
+  placeholder,
+  type,
+  value,
+  handleChange,
+  handleClear,
+}) => {
   return (
     <div className="relative my-3">
       <h2 className="font-medium text-base pb-2">{name}</h2>
