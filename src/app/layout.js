@@ -21,8 +21,10 @@ export default function RootLayout({ children }) {
         <Web3Modal>
           <InsureFiProvider>
             <SideBar />
-            <div className="p-4 sm:ml-64">
-              <NavBar />
+            <div className="p-4 sm:ml-64 ">
+              <div className="">
+                <NavBar />
+              </div>
               {children}
             </div>
           </InsureFiProvider>
