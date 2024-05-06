@@ -7,6 +7,8 @@ import {
 } from "@web3modal/ethers/react";
 import config from "../config/config.json";
 import insureFiAutomobileABI from "../config/InsureFiAutomobile.json";
+import insureFiPropertyABI from "../config/InsureFiProperty.json";
+
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { toast } from "react-toastify";
 import { subdomain, client } from "../config/ipfsConfig";
@@ -28,11 +30,11 @@ export const InsureFiProvider = ({ children }) => {
       return url;
     } catch (error) {
       console.log("Ipfs Error", error.message);
+
       toast.error("Error Uploading to IPFS");
     }
   };
-
-  const fetchContract = async (signerOrProvider) => {
+  const fetchAutomobileContract = async (signerOrProvider) => {
     const insureFiAutomobileConfig = config[chainId].insureFiAutomobile;
     const insureFiAutomobileContract = new Contract(
       insureFiAutomobileConfig.address,
@@ -40,6 +42,16 @@ export const InsureFiProvider = ({ children }) => {
       signerOrProvider
     );
     return insureFiAutomobileContract;
+  };
+
+  const fetchPropertyContract = async (signerOrProvider) => {
+    const insureFiPropertyConfig = config[chainId].insureFiProperty;
+    const insureFiPropertyContract = new Contract(
+      insureFiPropertyConfig.address,
+      insureFiPropertyABI,
+      signerOrProvider
+    );
+    return insureFiPropertyContract;
   };
 
   const generateAutomobilePremium = async (
@@ -85,7 +97,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const added = await client.add(data);
 
@@ -119,56 +131,6 @@ export const InsureFiProvider = ({ children }) => {
       toast.error("Error while generating automobile premium");
     }
   };
-  const generatePropertyPremium = async (
-    policyHolder,
-    location,
-    propertyType,
-    age,
-    protections,
-    value
-  ) => {
-    if (
-      !policyHolder ||
-      !location ||
-      !propertyType ||
-      !age ||
-      !protections ||
-      !value
-    )
-      return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.generatePremium(
-        policyHolder,
-        location,
-        propertyType,
-        age,
-        protections,
-        value
-      );
-
-      toast.promise(await transaction.wait(), {
-        pending: "Property premium generating...",
-        success: "Property premium generated successfully",
-        error: "Error while generating Property premium",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Property premium generated successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while generating Property premium");
-    }
-  };
 
   const initiateAutomobilePolicy = async (policyHolder, id) => {
     if (!policyHolder || !id) return toast.error("Data Is Missing");
@@ -184,7 +146,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.initiatePolicy(policyHolder, id);
 
@@ -203,34 +165,6 @@ export const InsureFiProvider = ({ children }) => {
       toast.error("Error while Initiating Policy");
     }
   };
-  const initiatePropertyPolicy = async (policyHolder, id) => {
-    if (!policyHolder || !id) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.initiatePolicy(policyHolder, id);
-
-      toast.promise(await transaction.wait(), {
-        pending: " Initiating Property Policy...",
-        success: "Property Policy Initiated successfully",
-        error: "Error while Initiating Property Policy",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Property Policy Initiated successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Initiating Property Policy");
-    }
-  };
 
   const checkAutomobilePolicyStatus = async (policyHolder, id) => {
     if (!policyHolder || !id) return toast.error("Data Is Missing");
@@ -240,7 +174,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.checkPolicyStatus(policyHolder, id);
 
@@ -260,34 +194,6 @@ export const InsureFiProvider = ({ children }) => {
     }
   };
 
-  const checkPropertyPolicyStatus = async (policyHolder, id) => {
-    if (!policyHolder || !id) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-
-      const contract = await fetchContract(provider);
-
-      const transaction = await contract.checkPolicyStatus(policyHolder, id);
-
-      toast.promise(await transaction.wait(), {
-        pending: "generating...",
-        success: "generated successfully",
-        error: "Error while generating  ",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("generated successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while generating  ");
-    }
-  };
-
   const renewAutomobilePolicy = async (policyHolder, id) => {
     if (!policyHolder || !id) return toast.error("Data Is Missing");
 
@@ -297,36 +203,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.renewPolicy(policyHolder, id);
-
-      toast.promise(await transaction.wait(), {
-        pending: "Initiating Policy Renewal ...",
-        success: "Policy Renewed successfully",
-        error: "Error while Initiating Policy Renewal",
-      });
-
-      if (await transaction.wait()) {
-        toast.success(" Policy Renewed successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Initiating Policy Renewal");
-    }
-  };
-
-  const renewPropertyPolicy = async (policyHolder, id) => {
-    if (!policyHolder || !id) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.renewPolicy(policyHolder, id);
 
@@ -355,36 +232,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.terminatePolicy(policyHolder, reason);
-
-      toast.promise(await transaction.wait(), {
-        pending: "Initiating Policy Termination ...",
-        success: "Policy Terminated successfully",
-        error: "Error while Terminating Policy",
-      });
-
-      if (await transaction.wait()) {
-        toast.success(" Policy Terminated successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Terminating Policy");
-    }
-  };
-
-  const terminatePropertyPolicy = async (policyHolder, reason) => {
-    if (!policyHolder || !reason) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.terminatePolicy(policyHolder, reason);
 
@@ -413,37 +261,9 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.removeVoter(policyHolder);
-
-      toast.promise(await transaction.wait(), {
-        pending: "Adding Voter...",
-        success: "Voter Added successfully",
-        error: "Error while adding Voter",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Voter Added successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while adding Voter");
-    }
-  };
-  const addPropertyVoter = async (voter) => {
-    if (!voter) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.removeVoter(voter);
 
       toast.promise(await transaction.wait(), {
         pending: "Adding Voter...",
@@ -476,50 +296,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
-
-      const added = await client.add(data);
-
-      const url = `${subdomain}/ipfs/${added.path}`;
-
-      const transaction = await contract.fileClaim(
-        policyID,
-        claimAmount,
-        claimDetails,
-        imageUrl
-      );
-
-      toast.promise(await transaction.wait(), {
-        pending: "Filing Claim...",
-        success: "Claim filed successfully",
-        error: "Error while Filing Claim",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Claim filed successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Filing Claim");
-    }
-  };
-  const filePropertyClaim = async (
-    policyID,
-    claimAmount,
-    claimDetails,
-    imageUrl
-  ) => {
-    if (!policyID || !claimAmount || !claimDetails || !imageUrl)
-      return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const added = await client.add(data);
 
@@ -556,7 +333,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.checkPolicy(policyHolder, id);
 
@@ -575,34 +352,7 @@ export const InsureFiProvider = ({ children }) => {
       toast.error("Error while Checking Policy");
     }
   };
-  const checkPropertyPolicy = async (policyHolder, id) => {
-    if (!policyHolder || !id) return toast.error("Data Is Missing");
 
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.checkPolicy(policyHolder, id);
-
-      toast.promise(await transaction.wait(), {
-        pending: " Checking Policy...",
-        success: " Policy Returned successfully",
-        error: "Error while Checking Policy",
-      });
-
-      if (await transaction.wait()) {
-        toast.success(" Policy Returned successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Checking Policy");
-    }
-  };
   const getAutomobileClaim = async (index) => {
     if (!index) return toast.error("Data Is Missing");
 
@@ -615,7 +365,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.getClaim(index);
 
@@ -640,7 +390,7 @@ export const InsureFiProvider = ({ children }) => {
     try {
       const provider = new BrowserProvider(walletProvider);
 
-      const contract = await fetchContract(provider);
+      const contract = await fetchAutomobileContract(provider);
 
       const transaction = await contract.getAllClaim();
 
@@ -659,58 +409,7 @@ export const InsureFiProvider = ({ children }) => {
       toast.error("Error while returning Claims");
     }
   };
-  const getPropertyClaim = async (index) => {
-    if (!index) return toast.error("Data Is Missing");
 
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-
-      const contract = await fetchContract(provider);
-
-      const transaction = await contract.getClaim(index);
-
-      toast.promise(await transaction.wait(), {
-        pending: " getting claim...",
-        success: "Claim Returned successfully",
-        error: "Error while returning Claim",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Claim Returned successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while returning Claim");
-    }
-  };
-  const getAllPropertyClaim = async () => {
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-
-      const contract = await fetchContract(provider);
-
-      const transaction = await contract.getAllClaim();
-
-      toast.promise(await transaction.wait(), {
-        pending: " getting claims...",
-        success: "Claims Returned successfully",
-        error: "Error while returning Claims",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Claims Returned successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while returning Claims");
-    }
-  };
   const voteOnAutomiblieClaim = async (claimId, vote) => {
     if (!claimId || !vote) return toast.error("Data Is Missing");
 
@@ -725,40 +424,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.voteOnClaim(claimId, vote);
-
-      toast.promise(await transaction.wait(), {
-        pending: "Initiating Claim...",
-        success: "Claimed successfully",
-        error: "Error while Claiming",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Claimed successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error while Claiming");
-    }
-  };
-  const voteOnPropertyClaim = async (claimId, vote) => {
-    if (!claimId || !vote) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    const data = JSON.stringify({
-      claimId,
-      vote,
-    });
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.voteOnClaim(claimId, vote);
 
@@ -791,7 +457,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.getVoteCounts(claimId);
 
@@ -811,40 +477,7 @@ export const InsureFiProvider = ({ children }) => {
     }
   };
 
-  const getPropertyVoteCounts = async (claimId) => {
-    if (!claimId) return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    const data = JSON.stringify({
-      claimId,
-    });
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchContract(signer);
-
-      const transaction = await contract.getVoteCounts(claimId);
-
-      toast.promise(await transaction.wait(), {
-        pending: "Tallying Votes...",
-        success: "Votes tallied successfully",
-        error: "Error Tallying Votes",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Votes tallied successfully");
-      }
-
-      router.push("/");
-    } catch (error) {
-      toast.error("Error Tallying Votes");
-    }
-  };
-
-  const drainPropertyContract = async (amount) => {
+  const drainAutomobileContract = async (amount) => {
     if (!amount) return toast.error("Data Is Missing");
 
     if (!isConnected) return toast.error("Please connect to your wallet");
@@ -857,7 +490,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchAutomobileContract(signer);
 
       const transaction = await contract.drainContract(amount);
 
@@ -876,7 +509,387 @@ export const InsureFiProvider = ({ children }) => {
       toast.error("Error Draining Contract");
     }
   };
-  const drainAutomobileContract = async (amount) => {
+
+  // PROPERTY INSURANCE FUNCTIONALITY
+
+  const generatePropertyPremium = async (
+    policyHolder,
+    location,
+    propertyType,
+    age,
+    protections,
+    value
+  ) => {
+    if (
+      !policyHolder ||
+      !location ||
+      !propertyType ||
+      !age ||
+      !protections ||
+      !value
+    )
+      return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.generatePremium(
+        policyHolder,
+        location,
+        propertyType,
+        age,
+        protections,
+        value
+      );
+
+      toast.promise(await transaction.wait(), {
+        pending: "Property premium generating...",
+        success: "Property premium generated successfully",
+        error: "Error while generating Property premium",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Property premium generated successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while generating Property premium");
+    }
+  };
+  const initiatePropertyPolicy = async (policyHolder, id) => {
+    if (!policyHolder || !id) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.initiatePolicy(policyHolder, id);
+
+      toast.promise(await transaction.wait(), {
+        pending: " Initiating Property Policy...",
+        success: "Property Policy Initiated successfully",
+        error: "Error while Initiating Property Policy",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Property Policy Initiated successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Initiating Property Policy");
+    }
+  };
+  const checkPropertyPolicyStatus = async (policyHolder, id) => {
+    if (!policyHolder || !id) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+
+      const contract = await fetchPropertyContract(provider);
+
+      const transaction = await contract.checkPolicyStatus(policyHolder, id);
+
+      toast.promise(await transaction.wait(), {
+        pending: "generating...",
+        success: "generated successfully",
+        error: "Error while generating  ",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("generated successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while generating  ");
+    }
+  };
+  const renewPropertyPolicy = async (policyHolder, id) => {
+    if (!policyHolder || !id) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.renewPolicy(policyHolder, id);
+
+      toast.promise(await transaction.wait(), {
+        pending: "Initiating Policy Renewal ...",
+        success: "Policy Renewed successfully",
+        error: "Error while Initiating Policy Renewal",
+      });
+
+      if (await transaction.wait()) {
+        toast.success(" Policy Renewed successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Initiating Policy Renewal");
+    }
+  };
+  const terminatePropertyPolicy = async (policyHolder, reason) => {
+    if (!policyHolder || !reason) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.terminatePolicy(policyHolder, reason);
+
+      toast.promise(await transaction.wait(), {
+        pending: "Initiating Policy Termination ...",
+        success: "Policy Terminated successfully",
+        error: "Error while Terminating Policy",
+      });
+
+      if (await transaction.wait()) {
+        toast.success(" Policy Terminated successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Terminating Policy");
+    }
+  };
+  const addPropertyVoter = async (voter) => {
+    if (!voter) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.removeVoter(voter);
+
+      toast.promise(await transaction.wait(), {
+        pending: "Adding Voter...",
+        success: "Voter Added successfully",
+        error: "Error while adding Voter",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Voter Added successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while adding Voter");
+    }
+  };
+  const filePropertyClaim = async (
+    policyID,
+    claimAmount,
+    claimDetails,
+    imageUrl
+  ) => {
+    if (!policyID || !claimAmount || !claimDetails || !imageUrl)
+      return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const added = await client.add(data);
+
+      const url = `${subdomain}/ipfs/${added.path}`;
+
+      const transaction = await contract.fileClaim(
+        policyID,
+        claimAmount,
+        claimDetails,
+        imageUrl
+      );
+
+      toast.promise(await transaction.wait(), {
+        pending: "Filing Claim...",
+        success: "Claim filed successfully",
+        error: "Error while Filing Claim",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Claim filed successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Filing Claim");
+    }
+  };
+  const checkPropertyPolicy = async (policyHolder, id) => {
+    if (!policyHolder || !id) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.checkPolicy(policyHolder, id);
+
+      toast.promise(await transaction.wait(), {
+        pending: " Checking Policy...",
+        success: " Policy Returned successfully",
+        error: "Error while Checking Policy",
+      });
+
+      if (await transaction.wait()) {
+        toast.success(" Policy Returned successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Checking Policy");
+    }
+  };
+  const getPropertyClaim = async (index) => {
+    if (!index) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+
+      const contract = await fetchPropertyContract(provider);
+
+      const transaction = await contract.getClaim(index);
+
+      toast.promise(await transaction.wait(), {
+        pending: " getting claim...",
+        success: "Claim Returned successfully",
+        error: "Error while returning Claim",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Claim Returned successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while returning Claim");
+    }
+  };
+  const getAllPropertyClaim = async () => {
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+
+      const contract = await fetchPropertyContract(provider);
+
+      const transaction = await contract.getAllClaim();
+
+      toast.promise(await transaction.wait(), {
+        pending: " getting claims...",
+        success: "Claims Returned successfully",
+        error: "Error while returning Claims",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Claims Returned successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while returning Claims");
+    }
+  };
+  const voteOnPropertyClaim = async (claimId, vote) => {
+    if (!claimId || !vote) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    const data = JSON.stringify({
+      claimId,
+      vote,
+    });
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.voteOnClaim(claimId, vote);
+
+      toast.promise(await transaction.wait(), {
+        pending: "Initiating Claim...",
+        success: "Claimed successfully",
+        error: "Error while Claiming",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Claimed successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error while Claiming");
+    }
+  };
+  const getPropertyVoteCounts = async (claimId) => {
+    if (!claimId) return toast.error("Data Is Missing");
+
+    if (!isConnected) return toast.error("Please connect to your wallet");
+
+    const data = JSON.stringify({
+      claimId,
+    });
+
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      const contract = await fetchPropertyContract(signer);
+
+      const transaction = await contract.getVoteCounts(claimId);
+
+      toast.promise(await transaction.wait(), {
+        pending: "Tallying Votes...",
+        success: "Votes tallied successfully",
+        error: "Error Tallying Votes",
+      });
+
+      if (await transaction.wait()) {
+        toast.success("Votes tallied successfully");
+      }
+
+      router.push("/");
+    } catch (error) {
+      toast.error("Error Tallying Votes");
+    }
+  };
+  const drainPropertyContract = async (amount) => {
     if (!amount) return toast.error("Data Is Missing");
 
     if (!isConnected) return toast.error("Please connect to your wallet");
@@ -889,7 +902,7 @@ export const InsureFiProvider = ({ children }) => {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
-      const contract = await fetchContract(signer);
+      const contract = await fetchPropertyContract(signer);
 
       const transaction = await contract.drainContract(amount);
 
