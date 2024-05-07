@@ -1,10 +1,11 @@
-import DropZone from "@/components/DropZone/DropZone";
-import Input from "@/components/Input/Input";
+"use client";
 import PropertyApplication from "@/components/PropertyApplication/PropertyApplication";
-import Radio from "@/components/Radio/Radio";
 import Stepper from "@/components/Stepper/Stepper";
+import { useState } from "react";
 
 const PropertyInsurance = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [complete, setComplete] = useState(false);
   return (
     <div className="px-4">
       <div>
@@ -13,7 +14,12 @@ const PropertyInsurance = () => {
         </h2>
       </div>
       <div className="max-w-5xl my-5">
-        <Stepper>
+        <Stepper
+          cuurrentStep={currentStep}
+          complete={complete}
+          setComplete={setComplete}
+          setStep={setCurrentStep}
+        >
           <PropertyApplication />
         </Stepper>
       </div>
