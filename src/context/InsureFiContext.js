@@ -72,7 +72,7 @@ export const InsureFiProvider = ({ children }) => {
     safetyFeatures,
     coverageType,
     vehicleValue,
-    router
+    imageUrl
   ) => {
     if (
       !driverAge ||
