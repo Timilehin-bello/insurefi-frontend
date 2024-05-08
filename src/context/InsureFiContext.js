@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   useWeb3ModalProvider,
   useWeb3ModalAccount,
@@ -9,7 +9,13 @@ import config from "../config/config.json";
 import insureFiAutomobileABI from "../config/InsureFiAutomobile.json";
 import insureFiPropertyABI from "../config/InsureFiProperty.json";
 
-import { BrowserProvider, Contract, formatUnits } from "ethers";
+import {
+  BrowserProvider,
+  Contract,
+  formatEther,
+  parseEther,
+  parseUnits,
+} from "ethers";
 import { toast } from "react-toastify";
 import { subdomain, client } from "../config/ipfsConfig";
 
@@ -18,6 +24,8 @@ export const InsureFiContext = React.createContext();
 export const InsureFiProvider = ({ children }) => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
+  const [policyId, setPolicyId] = useState("");
+  const [priceValue, setPriceValue] = useState("");
 
   const uploadToIPFS = async (file) => {
     try {
@@ -55,9 +63,9 @@ export const InsureFiProvider = ({ children }) => {
   };
 
   const generateAutomobilePremium = async (
-    policyHolder,
     driverAge,
-    accidents,
+    accident,
+    violation,
     vehicleCategory,
     vehicleAge,
     mileage,
@@ -67,42 +75,21 @@ export const InsureFiProvider = ({ children }) => {
     imageUrl
   ) => {
     if (
-      !policyHolder ||
       !driverAge ||
-      !accidents ||
+      !accident ||
+      !violation ||
       !vehicleCategory ||
       !vehicleAge ||
       !mileage ||
       !safetyFeatures ||
       !coverageType ||
-      !vehicleValue
-    )
-      return toast.error("Data Is Missing");
-
-    if (!isConnected) return toast.error("Please connect to your wallet");
-
-    const data = JSON.stringify({
-      policyHolder,
-      driverAge,
-      accidents,
-      vehicleCategory,
-      vehicleAge,
-      mileage,
-      safetyFeatures,
-      coverageType,
-      vehicleValue,
-    });
-
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = await fetchAutomobileContract(signer);
-
-      const transaction = await contract.generatePremium(
-        policyHolder,
+      !vehicleValue ||
+      !imageUrl
+    ) {
+      console.log(
         driverAge,
-        accidents,
+        accident,
+        violation,
         vehicleCategory,
         vehicleAge,
         mileage,
@@ -111,26 +98,100 @@ export const InsureFiProvider = ({ children }) => {
         vehicleValue,
         imageUrl
       );
-
-      const premium = await transaction.wait();
-      if (premium) {
-        localStorage.setItem(address, JSON.stringify(premium));
-        toast.success("Automobile premium generated successfully");
-      }
-    } catch (error) {
-      toast.error("Error while generating automobile premium");
+      toast.error("Please fill all the fields");
+      return false;
     }
-  };
-
-  const initiateAutomobilePolicy = async (policyHolder, id) => {
-    if (!policyHolder || !id) return toast.error("Data Is Missing");
 
     if (!isConnected) return toast.error("Please connect to your wallet");
 
-    const data = JSON.stringify({
-      policyHolder,
-      id,
-    });
+    try {
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
+
+      console.log("signer", signer);
+
+      const contract = await fetchAutomobileContract(signer);
+
+      const priceValue = parseEther(vehicleValue).toString();
+      console.log("priceValue", Number(priceValue.toString()));
+
+      const transaction = await contract.generatePremium(
+        driverAge,
+        accident,
+        violation,
+        vehicleCategory,
+        vehicleAge,
+        mileage,
+        safetyFeatures,
+        coverageType,
+        priceValue,
+        imageUrl
+      );
+
+      console.log("transaction", transaction);
+
+      const premium = await transaction.wait();
+
+      if (premium) {
+        console.log("premium wait", premium);
+        // console.log("premium", BigInt(premium["logs"]));
+        const _id = Number(`0x${premium.logs[0].data.slice(2, 66).toString()}`);
+
+        const _value = formatEther(
+          Number(`0x${premium.logs[0].data.slice(66, 128).toString()}`)
+        ).toString();
+
+        console.log("_value", _value);
+        if (premium) {
+          console.log("premium wait", premium);
+          // console.log("premium", BigInt(premium["logs"]));
+          const _id = Number(
+            `0x${premium.logs[0].data.slice(2, 66).toString()}`
+          );
+
+          const _value = formatEther(
+            Number(`0x${premium.logs[0].data.slice(66).toString()}`)
+          ).toString();
+
+          console.log(
+            "id orginal",
+            `0x${premium.logs[0].data.slice(2, 66).toString()}`
+          );
+
+          console.log(
+            "value orginal",
+            `0x${premium.logs[0].data.slice(66).toString()}`
+          );
+          console.log("_id", _id);
+
+          console.log("_value", _value);
+
+          setPolicyId(_id);
+          setPriceValue(_value);
+          console.log(_id, _value);
+          toast.success("Automobile premium generated successfully");
+
+          return true;
+        }
+        setPolicyId(_id);
+        setPriceValue(_value);
+        console.log(_id, _value);
+        toast.success("Automobile premium generated successfully");
+
+        return true;
+      }
+    } catch (error) {
+      console.log("generatePremium error", error);
+      toast.error("Error while generating automobile premium");
+      return false;
+    }
+  };
+
+  const initiateAutomobilePolicy = async () => {
+    if (!isConnected) {
+      toast.error("Please connect to your wallet");
+      return false;
+    }
 
     try {
       const provider = new BrowserProvider(walletProvider);
@@ -138,21 +199,22 @@ export const InsureFiProvider = ({ children }) => {
 
       const contract = await fetchAutomobileContract(signer);
 
-      const transaction = await contract.initiatePolicy(policyHolder, id);
+      const amountToPay = parseUnits(priceValue, "ether");
+      console.log("priceValue initiate", Number(amountToPay));
+      console.log("initiateAutomobilePolicy", address, policyId, amountToPay);
 
-      toast.promise(await transaction.wait(), {
-        pending: " Initiating Policy...",
-        success: " Policy Initiated successfully",
-        error: "Error while Initiating Policy",
+      const transaction = await contract.initiatePolicy(address, policyId, {
+        value: amountToPay.toString(),
       });
 
       if (await transaction.wait()) {
         toast.success(" Policy Initiated successfully");
+        return true;
       }
-
-      router.push("/");
     } catch (error) {
+      console.log("initiateAutomobilePolicy error", error);
       toast.error("Error while Initiating Policy");
+      return false;
     }
   };
 
@@ -272,12 +334,13 @@ export const InsureFiProvider = ({ children }) => {
   };
 
   const fileAutomobileClaim = async (
-    policyID,
+    policyId,
     claimAmount,
     claimDetails,
-    imageUrl
+    imageUrl,
+    router
   ) => {
-    if (!policyID || !claimAmount || !claimDetails || !imageUrl)
+    if (!policyId || !claimAmount || !claimDetails || !imageUrl)
       return toast.error("Data Is Missing");
 
     if (!isConnected) return toast.error("Please connect to your wallet");
@@ -288,30 +351,29 @@ export const InsureFiProvider = ({ children }) => {
 
       const contract = await fetchAutomobileContract(signer);
 
-      const added = await client.add(data);
+      const claimAmountInWei = parseEther(claimAmount).toString();
 
-      const url = `${subdomain}/ipfs/${added.path}`;
+      console.log("claimAmountInWei", claimAmountInWei);
 
       const transaction = await contract.fileClaim(
-        policyID,
-        claimAmount,
+        policyId,
+        claimAmountInWei,
         claimDetails,
-        imageUrl
+        [imageUrl]
       );
 
-      toast.promise(await transaction.wait(), {
-        pending: "Filing Claim...",
-        success: "Claim filed successfully",
-        error: "Error while Filing Claim",
-      });
-
       if (await transaction.wait()) {
-        toast.success("Claim filed successfully");
+        toast.success("File Claim successfully");
+        router.push("/");
       }
-
-      router.push("/");
     } catch (error) {
-      toast.error("Error while Filing Claim");
+      console.log("error", error);
+      console.log("errorMessage", error.message);
+      const errorMessage = error.message.split(": ")[1];
+
+      toast.error(
+        errorMessage.split("(")[0].split('"')[1] || "Error while Filing Claim"
+      );
     }
   };
 
@@ -384,19 +446,12 @@ export const InsureFiProvider = ({ children }) => {
 
       const transaction = await contract.getAllClaim();
 
-      toast.promise(await transaction.wait(), {
-        pending: " getting claims...",
-        success: "Claims Returned successfully",
-        error: "Error while returning Claims",
-      });
-
-      if (await transaction.wait()) {
-        toast.success("Claims Returned successfully");
+      if (transaction) {
+        console.log("transaction", transaction);
+        return transaction;
       }
-
-      router.push("/");
     } catch (error) {
-      toast.error("Error while returning Claims");
+      console.log("error", error);
     }
   };
 
@@ -942,6 +997,10 @@ export const InsureFiProvider = ({ children }) => {
         getPropertyVoteCounts,
         drainPropertyContract,
         drainAutomobileContract,
+        priceValue,
+        policyId,
+        address,
+        isConnected,
       }}
     >
       {children}

@@ -4,14 +4,19 @@ import Button from "@/components/Button/Button";
 import DropZone from "@/components/DropZone/DropZone";
 import Input from "@/components/Input/Input";
 import { InsureFiContext } from "@/context/InsureFiContext";
+import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 
 const PropertyInsurance = () => {
-  const { uploadToIPFS } = useContext(InsureFiContext);
-  const [price, setPrice] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
+  const [claimAmount, setClaimAmount] = useState("");
+  const [claimDetails, setClaimDetails] = useState("");
+  const [claimPolicyId, setClaimPolicyId] = useState("");
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const router = useRouter();
+
+  const { uploadToIPFS, fileAutomobileClaim } = useContext(InsureFiContext);
+
   return (
     <div className="px-4">
       <div>
@@ -28,9 +33,12 @@ const PropertyInsurance = () => {
                     {/*    Policy ID*/}
                     {/*</h3>*/}
                     <Input
+                      value={claimPolicyId}
                       name="Policy ID"
                       placeholder="Enter Policy ID"
                       type="number"
+                      handleChange={(e) => setClaimPolicyId(e.target.value)}
+                      handleClear={() => setClaimPolicyId("")}
                     />
                   </div>
                 </div>
@@ -44,9 +52,12 @@ const PropertyInsurance = () => {
                 <div className="w-96">
                   <div className="pt-3">
                     <Input
+                      value={claimAmount}
                       name="Claim Amount"
                       placeholder="Enter Claim Amount"
                       type="number"
+                      handleChange={(e) => setClaimAmount(e.target.value)}
+                      handleClear={() => setClaimAmount("")}
                     />
                   </div>
                 </div>
@@ -62,12 +73,13 @@ const PropertyInsurance = () => {
                     <label className=" text-base ">Claim Details</label>
                     <textarea
                       name="Claim Details"
+                      value={claimDetails}
                       id="1"
                       cols="30"
                       rows="6"
                       placeholder="Claim Details "
                       className="w-full h-36 rounded-md border border-[#D9D9D9] p-2"
-                      //   onChange={(e) => setDescription(e.target.value)}
+                      onChange={(e) => setClaimDetails(e.target.value)}
                     ></textarea>
                   </div>
                 </div>
@@ -81,18 +93,23 @@ const PropertyInsurance = () => {
           title="Supported htmlFormates: JPEG, PNG"
           heading="Drag & drop file or browse"
           subHeading="or Browse"
-          name={name}
-          description={description}
-          setImage={setImage}
           uploadToIPFS={uploadToIPFS}
-          price={price}
+          setImageUrl={setImageUrl}
         />
       </div>
 
       <div>
         <Button
           btnName="Submit Claim"
-          handleClick={() => console.log("Working")}
+          handleClick={() =>
+            fileAutomobileClaim(
+              claimPolicyId,
+              claimAmount,
+              claimDetails,
+              imageUrl,
+              router
+            )
+          }
         />
       </div>
     </div>
