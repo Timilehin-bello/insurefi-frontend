@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import DAOcard from "@/components/DAOcard/card";
 
 const proposals = [
-    { policyID: 'Policy 1', claimID: 'Claim 1', details: 'Proposal 1 Details', img: 'image-source-path-here' },
-    { policyID: 'Policy 2', claimID: 'Claim 2', details: 'Proposal 2 Details', img: 'image-source-path-here' },
+    { policyID: '1', claimID: 'Claim ID: 1', details: 'I was involved in an accident along Lagos-Ibadan express way on Thursday 25th January, 2024. All evidence and documentation are attached.', img: 'image-source-path-here' },
+    { policyID: '2', claimID: 'Claim ID: 2', details: 'I was involved in an accident along Lagos-Ibadan express way on Thursday 25th January, 2024. All evidence and documentation are attached.', img: 'image-source-path-here' },
     // more proposals here
 ];
 
