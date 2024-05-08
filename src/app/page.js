@@ -5,8 +5,30 @@ import { GraphIcon } from "../../public/icons/graph";
 import PolicyClaimCard from "@/components/PolicyClaimCard/PolicyClaimCard";
 import SimpleLineChat from "@/components/SimpleLineChart/SimpleLineChart";
 import Link from "next/link";
+import { InsureFiContext } from "@/context/InsureFiContext";
+import { useContext, useEffect, useState } from "react";
 
 export default function Home() {
+  const [getAllClaims, setGetAllClaims] = useState([]);
+  const { getAllAutomobileClaim, isConnected } = useContext(InsureFiContext);
+
+  // const getAllAutomobileClaims = async () => {
+
+  // };
+  useEffect(() => {
+    if (!isConnected) return;
+    getAllAutomobileClaim().then((res) => {
+      setGetAllClaims(res);
+
+      // const [...data] = res;
+      console.log("res", res, typeof res);
+      console.log(res[0], typeof res[0], res[0][1]);
+      // console.log("resLength", res.length);
+      // res.forEach((item) => setGetAllClaims((prev) => [...prev, item]));
+
+      // console.log("data", data);
+    });
+  }, [isConnected]);
   return (
     <div>
       <div className="p-4  border-gray-200  rounded-lg ">
@@ -14,6 +36,28 @@ export default function Home() {
           <span className=" text-[20.24px] font-medium text-black">
             Available Insurances
           </span>
+
+          {getAllClaims.map((item) => (
+            <h1>
+              1. {Number(item[0])}
+              <br />
+              2. {item[1]}
+              <br />
+              3. {Number(item[2])}
+              <br />
+              4. {item[3]}
+              <br />
+              5. {item[4]}
+              <br />
+              6. {Number(item[5])}
+              {/* {item[index].map((nestedItem) => (
+                <h4>{nestedItem}</h4>
+              ))} */}
+            </h1>
+          ))}
+
+          <h1 className="text-green-500">{getAllClaims[0]}</h1>
+          <h1 className="text-red-500">{getAllClaims[1]}</h1>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
           <Link href={"/auto-insurance"}>
@@ -54,11 +98,11 @@ export default function Home() {
               /> */}
 
               <div className="w-[115.55px]">
-               <Link href={'/proposals'} >
-                <button className="bg-white w-full text-black border border-[#C9C5C5] p-2 rounded-full font-bold ">
-                  Proposals
-                </button>
-                   </Link>
+                <Link href={"/proposals"}>
+                  <button className="bg-white w-full text-black border border-[#C9C5C5] p-2 rounded-full font-bold ">
+                    Proposals
+                  </button>
+                </Link>
               </div>
             </div>
 
