@@ -455,15 +455,15 @@ export const InsureFiProvider = ({ children }) => {
     }
   };
 
-  const voteOnAutomiblieClaim = async (claimId, vote) => {
-    if (!claimId || !vote) return toast.error("Data Is Missing");
+  const voteOnAutomobileClaim = async (claimId, vote) => {
+    console.log("claimId", claimId, "vote", vote);
+    // if (!claimId || !vote) {
+    //   toast.error("Data Is Missing");
+    //   return false;
+    // }
+    console.log("claimId", claimId, "vote", vote);
 
     if (!isConnected) return toast.error("Please connect to your wallet");
-
-    const data = JSON.stringify({
-      claimId,
-      vote,
-    });
 
     try {
       const provider = new BrowserProvider(walletProvider);
@@ -473,19 +473,14 @@ export const InsureFiProvider = ({ children }) => {
 
       const transaction = await contract.voteOnClaim(claimId, vote);
 
-      toast.promise(await transaction.wait(), {
-        pending: "Initiating Claim...",
-        success: "Claimed successfully",
-        error: "Error while Claiming",
-      });
-
       if (await transaction.wait()) {
         toast.success("Claimed successfully");
+        return true;
       }
-
-      router.push("/");
     } catch (error) {
+      console.log("error", error);
       toast.error("Error while Claiming");
+      return false;
     }
   };
 
@@ -991,7 +986,7 @@ export const InsureFiProvider = ({ children }) => {
         getAllAutomobileClaim,
         getPropertyClaim,
         getAllPropertyClaim,
-        voteOnAutomiblieClaim,
+        voteOnAutomobileClaim,
         voteOnPropertyClaim,
         getAutomobileVoteCounts,
         getPropertyVoteCounts,

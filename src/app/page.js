@@ -6,29 +6,29 @@ import PolicyClaimCard from "@/components/PolicyClaimCard/PolicyClaimCard";
 import SimpleLineChat from "@/components/SimpleLineChart/SimpleLineChart";
 import Link from "next/link";
 import { InsureFiContext } from "@/context/InsureFiContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 export default function Home() {
   const [getAllClaims, setGetAllClaims] = useState([]);
-  const { getAllAutomobileClaim, isConnected } = useContext(InsureFiContext);
+  // const { getAllAutomobileClaim, isConnected } = useContext(InsureFiContext);
 
   // const getAllAutomobileClaims = async () => {
 
   // };
-  useEffect(() => {
-    if (!isConnected) return;
-    getAllAutomobileClaim().then((res) => {
-      setGetAllClaims(res);
+  // useEffect(() => {
+  //   if (!isConnected) return;
+  //   getAllAutomobileClaim().then((res) => {
+  //     setGetAllClaims(res);
 
-      // const [...data] = res;
-      console.log("res", res, typeof res);
-      console.log(res[0], typeof res[0], res[0][1]);
-      // console.log("resLength", res.length);
-      // res.forEach((item) => setGetAllClaims((prev) => [...prev, item]));
+  //     // const [...data] = res;
+  //     console.log("res", res, typeof res);
+  //     console.log("testres", res[0], typeof res[0][0], res[0][1]);
+  //     // console.log("resLength", res.length);
+  //     // res.forEach((item) => setGetAllClaims((prev) => [...prev, item]));
 
-      // console.log("data", data);
-    });
-  }, [isConnected]);
+  //     // console.log("data", data);
+  //   });
+  // }, [isConnected]);
   return (
     <div>
       <div className="p-4  border-gray-200  rounded-lg ">
@@ -36,25 +36,6 @@ export default function Home() {
           <span className=" text-[20.24px] font-medium text-black">
             Available Insurances
           </span>
-
-          {getAllClaims.map((item) => (
-            <h1>
-              1. {Number(item[0])}
-              <br />
-              2. {item[1]}
-              <br />
-              3. {Number(item[2])}
-              <br />
-              4. {item[3]}
-              <br />
-              5. {item[4]}
-              <br />
-              6. {Number(item[5])}
-              {/* {item[index].map((nestedItem) => (
-                <h4>{nestedItem}</h4>
-              ))} */}
-            </h1>
-          ))}
 
           <h1 className="text-green-500">{getAllClaims[0]}</h1>
           <h1 className="text-red-500">{getAllClaims[1]}</h1>
