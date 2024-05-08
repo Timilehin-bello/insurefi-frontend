@@ -72,7 +72,7 @@ export const InsureFiProvider = ({ children }) => {
     safetyFeatures,
     coverageType,
     vehicleValue,
-    imageUrl
+    router
   ) => {
     if (
       !driverAge ||
@@ -105,8 +105,8 @@ export const InsureFiProvider = ({ children }) => {
     if (!isConnected) return toast.error("Please connect to your wallet");
 
     try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
+      const ethersProvider = new BrowserProvider(walletProvider);
+      const signer = await ethersProvider.getSigner();
 
       console.log("signer", signer);
 
