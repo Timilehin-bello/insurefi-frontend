@@ -91,25 +91,6 @@ const ProposalCard = ({ getAllClaims, setGetClaimId, openModal }) => {
         </tbody>
       </table>
     </div>
-
-    //     <div className="bg-white rounded-lg shadow-lg p-6">
-    //       {Object.keys(proposal).map((key) => (
-    //         <div key={key} className="mb-4">
-    //           <h3 className="text-lg font-semibold">{key}</h3>
-    //           <p className="text-gray-700">
-    //             {typeof proposal[key] === "bigint"
-    //               ? proposal[key].toString()
-    //               : proposal[key]}
-    //           </p>
-    //         </div>
-    //       ))}
-    //       <button
-    //         onClick={openModal}
-    //         className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600"
-    //       >
-    //         Open Modal
-    //       </button>
-    //     </div>
   );
 };
 
