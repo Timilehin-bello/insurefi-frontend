@@ -26,6 +26,9 @@ export const InsureFiProvider = ({ children }) => {
   const { walletProvider } = useWeb3ModalProvider();
   const [policyId, setPolicyId] = useState("");
   const [priceValue, setPriceValue] = useState("");
+  const [propertyPolicyId, setPropertyPolicyId] = useState("");
+  const [propertyPriceValue, setPropertyPriceValue] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const uploadToIPFS = async (file) => {
@@ -570,53 +573,113 @@ export const InsureFiProvider = ({ children }) => {
   // PROPERTY INSURANCE FUNCTIONALITY
 
   const generatePropertyPremium = async (
-    policyHolder,
     location,
     propertyType,
-    age,
+    propertyAge,
+    priceAmount,
     protections,
-    value
+    imageUrl
   ) => {
+    console.log("testing", location, propertyType, propertyAge, priceAmount);
     if (
-      !policyHolder ||
       !location ||
       !propertyType ||
-      !age ||
+      !propertyAge ||
+      !priceAmount ||
       !protections ||
-      !value
-    )
-      return toast.error("Data Is Missing");
+      !imageUrl
+    ) {
+      console.log(
+        location,
+        propertyType,
+        propertyAge,
+        priceAmount,
+        protections,
+        imageUrl
+      );
+      toast.error("Please fill all the fields");
+      return false;
+    }
 
     if (!isConnected) return toast.error("Please connect to your wallet");
 
     try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
+      const ethersProvider = new BrowserProvider(walletProvider);
+      const signer = await ethersProvider.getSigner();
+
+      console.log("signer", signer);
 
       const contract = await fetchPropertyContract(signer);
 
+      const priceValue = parseEther(priceAmount).toString();
+      console.log("priceValueNumber", Number(priceValue.toString()));
+      console.log("priceValue", priceValue);
+      console.log("priceAmount", priceAmount);
+      console.log("protections", protections);
+
       const transaction = await contract.generatePremium(
-        policyHolder,
         location,
         propertyType,
-        age,
+        propertyAge,
         protections,
-        value
+        priceAmount,
+        imageUrl
       );
 
-      toast.promise(await transaction.wait(), {
-        pending: "Property premium generating...",
-        success: "Property premium generated successfully",
-        error: "Error while generating Property premium",
-      });
+      const premium = await transaction.wait();
 
-      if (await transaction.wait()) {
-        toast.success("Property premium generated successfully");
+      if (premium) {
+        console.log("premium wait", premium);
+        // console.log("premium", BigInt(premium["logs"]));
+        const _id = Number(`0x${premium.logs[0].data.slice(2, 66).toString()}`);
+
+        const _value = formatEther(
+          Number(`0x${premium.logs[0].data.slice(66, 128).toString()}`)
+        ).toString();
+
+        console.log("_value", _value);
+        if (premium) {
+          console.log("premium wait", premium);
+          // console.log("premium", BigInt(premium["logs"]));
+          const _id = Number(
+            `0x${premium.logs[0].data.slice(2, 66).toString()}`
+          );
+
+          const _value = formatEther(
+            Number(`0x${premium.logs[0].data.slice(66).toString()}`)
+          ).toString();
+
+          console.log(
+            "id orginal",
+            `0x${premium.logs[0].data.slice(2, 66).toString()}`
+          );
+
+          console.log(
+            "value orginal",
+            `0x${premium.logs[0].data.slice(66).toString()}`
+          );
+          console.log("_id", _id);
+
+          console.log("_value", _value);
+
+          setPropertyPolicyId(_id);
+          setPropertyPriceValue(_value);
+          console.log(_id, _value);
+          toast.success("Automobile premium generated successfully");
+
+          return true;
+        }
+        setPolicyId(_id);
+        setPriceValue(_value);
+        console.log(_id, _value);
+        toast.success("Automobile premium generated successfully");
+
+        return true;
       }
-
-      router.push("/");
     } catch (error) {
+      console.log("error", error);
       toast.error("Error while generating Property premium");
+      return false;
     }
   };
   const initiatePropertyPolicy = async (policyHolder, id) => {
@@ -1011,6 +1074,9 @@ export const InsureFiProvider = ({ children }) => {
         drainAutomobileContract,
         priceValue,
         policyId,
+        propertyPolicyId,
+        propertyPriceValue,
+
         address,
         isConnected,
         loading,

@@ -141,6 +141,7 @@ const Proposals = () => {
         </div>
       )}
     </>
+
   );
 };
 
