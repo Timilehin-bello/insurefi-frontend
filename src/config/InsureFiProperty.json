@@ -52,7 +52,7 @@
       },
       {
         "indexed": false,
-        "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+        "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
         "name": "status",
         "type": "uint8"
       },
@@ -152,6 +152,31 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "policyHolder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "policyId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      }
+    ],
+    "name": "PremiumGenerated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "voter",
@@ -204,7 +229,7 @@
         "type": "string"
       },
       {
-        "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+        "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
         "name": "status",
         "type": "uint8"
       }
@@ -217,7 +242,7 @@
     "name": "Calculator",
     "outputs": [
       {
-        "internalType": "contract IAutomobilePremiumCalculator",
+        "internalType": "contract IPropertyPremiumCalculator",
         "name": "",
         "type": "address"
       }
@@ -285,18 +310,28 @@
           },
           {
             "internalType": "string",
-            "name": "vehicleCategory",
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "propertyType",
             "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "vehicleValue",
+            "name": "age",
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "coverageDetails",
-            "type": "string"
+            "internalType": "string[]",
+            "name": "protections",
+            "type": "string[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "propertyValue",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -324,12 +359,17 @@
             "type": "string"
           },
           {
-            "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+            "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "imageurl",
+            "type": "string"
           }
         ],
-        "internalType": "struct AutomobileInsurancePolicy.Policy",
+        "internalType": "struct PropertyInsurancePolicy.Policy",
         "name": "policy_",
         "type": "tuple"
       }
@@ -362,13 +402,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "drainContract",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -405,54 +439,34 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_policyHolder",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "driverAge",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "accidents",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "violations",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "location",
+        "type": "string"
       },
       {
         "internalType": "string",
-        "name": "vehicleCategory",
+        "name": "propertyType",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "vehicleAge",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "mileage",
+        "name": "age",
         "type": "uint256"
       },
       {
         "internalType": "string[]",
-        "name": "safetyFeatures",
+        "name": "protections",
         "type": "string[]"
       },
       {
-        "internalType": "string",
-        "name": "coverageType",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "propertyValue",
+        "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "vehicleValue",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "imageUrl",
+        "type": "string"
       }
     ],
     "name": "generatePremium",
@@ -498,12 +512,12 @@
             "type": "string[]"
           },
           {
-            "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+            "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
           }
         ],
-        "internalType": "struct AutomobileInsurancePolicy.Claim[]",
+        "internalType": "struct PropertyInsurancePolicy.Claim[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -549,12 +563,12 @@
             "type": "string[]"
           },
           {
-            "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+            "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
           }
         ],
-        "internalType": "struct AutomobileInsurancePolicy.Claim",
+        "internalType": "struct PropertyInsurancePolicy.Claim",
         "name": "",
         "type": "tuple"
       }
@@ -596,18 +610,28 @@
           },
           {
             "internalType": "string",
-            "name": "vehicleCategory",
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "propertyType",
             "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "vehicleValue",
+            "name": "age",
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "coverageDetails",
-            "type": "string"
+            "internalType": "string[]",
+            "name": "protections",
+            "type": "string[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "propertyValue",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -635,12 +659,17 @@
             "type": "string"
           },
           {
-            "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+            "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
             "name": "status",
             "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "imageurl",
+            "type": "string"
           }
         ],
-        "internalType": "struct AutomobileInsurancePolicy.Policy",
+        "internalType": "struct PropertyInsurancePolicy.Policy",
         "name": "",
         "type": "tuple"
       }
@@ -700,12 +729,12 @@
             "type": "bool"
           },
           {
-            "internalType": "enum AutomobileInsurancePolicy.VoteOption",
+            "internalType": "enum PropertyInsurancePolicy.VoteOption",
             "name": "option",
             "type": "uint8"
           }
         ],
-        "internalType": "struct AutomobileInsurancePolicy.Vote",
+        "internalType": "struct PropertyInsurancePolicy.Vote",
         "name": "",
         "type": "tuple"
       }
@@ -767,7 +796,7 @@
         "type": "string"
       },
       {
-        "internalType": "enum AutomobileInsurancePolicy.ClaimStatus",
+        "internalType": "enum PropertyInsurancePolicy.ClaimStatus",
         "name": "status",
         "type": "uint8"
       }
@@ -858,7 +887,7 @@
         "type": "uint256"
       },
       {
-        "internalType": "enum AutomobileInsurancePolicy.VoteOption",
+        "internalType": "enum PropertyInsurancePolicy.VoteOption",
         "name": "_vote",
         "type": "uint8"
       }
@@ -908,7 +937,7 @@
         "type": "bool"
       },
       {
-        "internalType": "enum AutomobileInsurancePolicy.VoteOption",
+        "internalType": "enum PropertyInsurancePolicy.VoteOption",
         "name": "option",
         "type": "uint8"
       }
