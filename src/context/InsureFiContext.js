@@ -499,7 +499,12 @@ export const InsureFiProvider = ({ children }) => {
     } catch (error) {
       console.log("error", error);
       setLoading(false);
-      toast.error("Error while Claiming");
+      const errorMessage = error.message.split(": ")[1];
+
+      toast.error(
+        errorMessage.split("(")[0].split('"')[1] || "Error while Claiming"
+      );
+
       return false;
     }
   };
