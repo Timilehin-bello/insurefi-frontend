@@ -26,6 +26,7 @@ export const InsureFiProvider = ({ children }) => {
   const { walletProvider } = useWeb3ModalProvider();
   const [policyId, setPolicyId] = useState("");
   const [priceValue, setPriceValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const uploadToIPFS = async (file) => {
     try {
@@ -105,6 +106,7 @@ export const InsureFiProvider = ({ children }) => {
     if (!isConnected) return toast.error("Please connect to your wallet");
 
     try {
+      setLoading(true);
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
 
@@ -168,20 +170,23 @@ export const InsureFiProvider = ({ children }) => {
 
           setPolicyId(_id);
           setPriceValue(_value);
+          setLoading(false);
           console.log(_id, _value);
           toast.success("Automobile premium generated successfully");
 
           return true;
         }
-        setPolicyId(_id);
-        setPriceValue(_value);
-        console.log(_id, _value);
-        toast.success("Automobile premium generated successfully");
+        // setPolicyId(_id);
+        // setPriceValue(_value);
+        // console.log(_id, _value);
+        // toast.success("Automobile premium generated successfully");
 
-        return true;
+        // return true;
       }
     } catch (error) {
       console.log("generatePremium error", error);
+
+      setLoading(false);
       toast.error("Error while generating automobile premium");
       return false;
     }
@@ -194,6 +199,7 @@ export const InsureFiProvider = ({ children }) => {
     }
 
     try {
+      setLoading(true);
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
 
@@ -208,11 +214,13 @@ export const InsureFiProvider = ({ children }) => {
       });
 
       if (await transaction.wait()) {
+        setLoading(false);
         toast.success(" Policy Initiated successfully");
         return true;
       }
     } catch (error) {
       console.log("initiateAutomobilePolicy error", error);
+      setLoading(false);
       toast.error("Error while Initiating Policy");
       return false;
     }
@@ -345,6 +353,8 @@ export const InsureFiProvider = ({ children }) => {
 
     if (!isConnected) return toast.error("Please connect to your wallet");
 
+    setLoading(true);
+
     try {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
@@ -363,12 +373,15 @@ export const InsureFiProvider = ({ children }) => {
       );
 
       if (await transaction.wait()) {
+        setLoading(false);
         toast.success("File Claim successfully");
+
         router.push("/");
       }
     } catch (error) {
       console.log("error", error);
       console.log("errorMessage", error.message);
+      setLoading(false);
       const errorMessage = error.message.split(": ")[1];
 
       toast.error(
@@ -465,6 +478,8 @@ export const InsureFiProvider = ({ children }) => {
 
     if (!isConnected) return toast.error("Please connect to your wallet");
 
+    setLoading(true);
+
     try {
       const provider = new BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
@@ -474,11 +489,13 @@ export const InsureFiProvider = ({ children }) => {
       const transaction = await contract.voteOnClaim(claimId, vote);
 
       if (await transaction.wait()) {
+        setLoading(false);
         toast.success("Claimed successfully");
         return true;
       }
     } catch (error) {
       console.log("error", error);
+      setLoading(false);
       toast.error("Error while Claiming");
       return false;
     }
@@ -996,6 +1013,8 @@ export const InsureFiProvider = ({ children }) => {
         policyId,
         address,
         isConnected,
+        loading,
+        setLoading,
       }}
     >
       {children}

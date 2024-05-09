@@ -3,6 +3,7 @@
 import Button from "@/components/Button/Button";
 import DropZone from "@/components/DropZone/DropZone";
 import Input from "@/components/Input/Input";
+import { LoaderSpinner } from "@/components/LoaderSpinner/LoaderSpinner";
 import { InsureFiContext } from "@/context/InsureFiContext";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -19,6 +20,7 @@ const PropertyInsurance = () => {
 
   return (
     <div className="px-4">
+      <LoaderSpinner />
       <div>
         <h2 className="pt-3 leading-3 text-xl font-bold">File A Claim</h2>
       </div>

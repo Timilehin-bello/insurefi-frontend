@@ -9,6 +9,7 @@ import Button from "../Button/Button";
 import Stepper from "../Stepper/Stepper";
 import PremiumPaymentTable from "../PremiumPaymentTable/PremiumPaymentTable";
 import { ConfirmIcon } from "../../../public/icons/confirm";
+import { LoaderSpinner } from "../LoaderSpinner/LoaderSpinner";
 
 const AutomobileApplication = ({
   currentStep,
@@ -45,7 +46,6 @@ const AutomobileApplication = ({
     policyId,
     priceValue,
     initiateAutomobilePolicy,
-    address,
   } = useContext(InsureFiContext);
 
   const handleCheckboxChange = (event) => {
@@ -119,6 +119,7 @@ const AutomobileApplication = ({
 
   return (
     <Stepper currentStep={currentStep} complete={complete} steps={steps}>
+    <LoaderSpinner />
       {currentStep === 1 && (
         <div className="w-full">
           <div className="flex justify-between w-full">

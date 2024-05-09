@@ -5,6 +5,7 @@ import { InsureFiContext } from "@/context/InsureFiContext";
 import ProposalCard from "@/components/ProposalCard/ProposalCard";
 import Image from "next/image";
 import WaveLoader from "@/components/WaveLoader/WaveLoader";
+import { LoaderSpinner } from "@/components/LoaderSpinner/LoaderSpinner";
 
 const Proposals = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -53,6 +54,7 @@ const Proposals = () => {
 
   return (
     <>
+      <LoaderSpinner />
       {!isConnected ? (
         <div className="flex justify-center items-center h-screen">
           <h1 className="text-2xl font-bold">Please Connect Your Wallet</h1>
