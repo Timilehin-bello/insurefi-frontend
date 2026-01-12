@@ -24,7 +24,7 @@
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.6",
     "viem": "^2.9.21",
-    "wagmi": "^2.5.20"
+    "wagmi": "^2.19.5"
   },
   "devDependencies": {
     "eslint": "^8",
